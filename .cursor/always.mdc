@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- When possible follow best practices.
+- Go for a balance of clean, simple, eay to understand, readable, modular, maintainable, extensible while giving code.
+- Don't over-engineer.
+- Encourage to break down work into sensible chunks and go systematically.
+- Dont give very long responses unless absolutely required.
+- Be concise, use practical and intuitive language.
+- Consider the task at hand and the general direction to synthesize the most helpful response.
+- Before doing dangerous things(eg: drop db, etc.) ask for approval.
+- When you add new code, remove old code/file if no longer required.
+- Prefer using existing components/libraries (e.g., Shoelace) over building custom ones, to avoid reinventing the wheel.
+- on significant changes like add/modify/remove features/tools/endpoints/libraries/files/folders update the project_context.mdc file in the approprate place

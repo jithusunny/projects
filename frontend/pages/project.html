@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Details</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: #f5f5f5;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .task-list {
+      display: grid;
+      gap: 1rem;
+    }
+    .task-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .task-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .task-info {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .task-actions {
+      display: flex;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .task-card:hover .task-actions {
+      opacity: 1;
+    }
+    .back-button {
+      margin-bottom: 1rem;
+    }
+  </style>
+  <link rel="stylesheet" href="/node_modules/@shoelace-style/shoelace/dist/themes/light.css">
+</head>
+<body>
+  <sl-button class="back-button" variant="text" href="/pages/projects.html">
+    <sl-icon slot="prefix" name="arrow-left"></sl-icon>
+    Back
+  </sl-button>
+
+  <div class="header">
+    <div id="projectInfo"></div>
+    <sl-button variant="primary" id="newTaskBtn">
+      <sl-icon slot="prefix" name="plus"></sl-icon>
+      New Task
+    </sl-button>
+  </div>
+
+  <div id="taskList" class="task-list"></div>
+
+  <script type="module" src="/pages/project.js"></script>
+</body>
+</html> 

@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Project context for developers
+
+vision
+- modular, minimal projects and tasks management app
+- projects can have tasks, tasks can also exist independently
+- clean, maintainable, extensible codebase
+
+features
+- create/read/update/delete projects
+- create/read/update/delete tasks (standalone or under projects)
+- mark tasks as done, collapse done tasks
+- modern UI with Shoelace, Vite
+- backend API with FastAPI, async SQLAlchemy, PostgreSQL
+- DB migrations with Alembic
+- Dockerized DB for local dev
+
+main building blocks
+- backend: FastAPI, SQLAlchemy, asyncpg, Alembic, Pydantic, uv, Docker, python-dotenv
+- frontend: Vite, Shoelace, Node.js, npm
+- database: PostgreSQL
+
+api endpoints
+- /api/projects/ [GET, POST] list/create projects
+- /api/projects/{project_id} [GET, PUT, DELETE] get/update/delete project
+- /api/projects/{project_id}/tasks [GET, POST] list/create tasks for project
+- /api/tasks/ [GET, POST] list/create standalone tasks
+- /api/tasks/{task_id} [GET, PUT, DELETE] get/update/delete task
+
+models/schemas
+- Project: id, name, description, created_at, updated_at, tasks
+- Task: id, title, description, completed, created_at, updated_at, project_id
+- Pydantic schemas mirror models for validation and API
+
+folder structure
+- backend/
+  - app/
+    - api/ (endpoints, routers)
+    - crud/ (CRUD logic)
+    - models/ (SQLAlchemy models)
+    - schemas/ (Pydantic schemas)
+    - database.py (DB connection)
+    - main.py (FastAPI app)
+  - alembic/ (migrations)
+  - docker-compose.yml, docker.env, sample.env, pyproject.toml
+- frontend/
+  - pages/ (projects.js/html, tasks.js/html, project.js/html)
+  - main.js, index.html, package.json
+
+notes
+- backend runs locally, DB in Docker
+- all dependencies managed with uv (backend) and npm (frontend)
+- use Shoelace components for UI, don't reinvent the wheel
+- see backend/README.md and frontend/README.md for setup and dev commands
