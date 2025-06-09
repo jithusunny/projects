@@ -18,6 +18,8 @@ features
 - backend API with FastAPI, async SQLAlchemy, PostgreSQL
 - DB migrations with Alembic
 - Dockerized DB for local dev
+- admin import/export (CSV, transactional, in UI)
+- Uniform UI: All main pages (including admin) use a shared layout, header, and consistent spacing with Shoelace components for a cohesive look and feel.
 
 main building blocks
 - backend: FastAPI, SQLAlchemy, asyncpg, Alembic, Pydantic, uv, Docker, python-dotenv
@@ -30,6 +32,8 @@ api endpoints
 - /api/projects/{project_id}/tasks [GET, POST] list/create tasks for project
 - /api/tasks/ [GET, POST] list/create standalone tasks
 - /api/tasks/{task_id} [GET, PUT, DELETE] get/update/delete task
+- /api/admin/export [GET] export all tables as CSV to exports/ directory
+- /api/admin/import [POST] import data from CSV
 
 models/schemas
 - Project: id, name, description, created_at, updated_at, tasks
@@ -43,6 +47,7 @@ folder structure
     - crud/ (CRUD logic)
     - models/ (SQLAlchemy models)
     - schemas/ (Pydantic schemas)
+    - utils/ (utility modules, e.g., export.py for CSV export)
     - database.py (DB connection)
     - main.py (FastAPI app)
   - alembic/ (migrations)
@@ -56,3 +61,8 @@ notes
 - all dependencies managed with uv (backend) and npm (frontend)
 - use Shoelace components for UI, don't reinvent the wheel
 - see backend/README.md and frontend/README.md for setup and dev commands
+- Backend: Use `uv pip install <package>` for Python dependencies. See backend/README.md.
+- Frontend: Use `npm install <package>` for JS dependencies.
+
+# coding guidelines
+- Always use explicit timezone handling for all date and time operations. Never use naive datetimes.

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin / Settings</title>
+  <link rel="stylesheet" href="/node_modules/@shoelace-style/shoelace/dist/themes/light.css">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-left: 0;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -1px;
+    }
+    .back-button {
+      margin-bottom: 1rem;
+    }
+    .admin-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 420px;
+      margin: 0;
+    }
+    .admin-card {
+      padding: 2rem 2rem 1.5rem 2rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .card-header {
+      font-size: 1.15rem;
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+    .card-desc {
+      color: #666;
+      font-size: 0.98rem;
+      margin-bottom: 0.5rem;
+    }
+    sl-button {
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+  <sl-button class="back-button" variant="text" href="/">
+    <sl-icon slot="prefix" name="arrow-left"></sl-icon>
+    Back
+  </sl-button>
+  <div class="header">
+    <h1>Admin / Settings</h1>
+  </div>
+  <div class="admin-section">
+    <sl-card class="admin-card">
+      <div class="card-header">Import Data</div>
+      <div class="card-desc">Import projects and tasks from CSV files. All files must be valid or nothing will be imported.</div>
+      <sl-button id="importBtn" variant="primary">
+        <sl-icon slot="prefix" name="upload"></sl-icon>
+        Import
+      </sl-button>
+    </sl-card>
+    <sl-card class="admin-card">
+      <div class="card-header">Export Data</div>
+      <div class="card-desc">Export all projects and tasks as CSV files. Files will be saved to the server's exports folder.</div>
+      <sl-button id="exportBtn" variant="success">
+        <sl-icon slot="prefix" name="download"></sl-icon>
+        Export
+      </sl-button>
+    </sl-card>
+  </div>
+  <script type="module" src="/pages/admin.js"></script>
+</body>
+</html> 
