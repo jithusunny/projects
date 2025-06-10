@@ -7,6 +7,7 @@ const API_URL = 'http://localhost:8000/api';
 
 const importBtn = document.getElementById('importBtn');
 const exportBtn = document.getElementById('exportBtn');
+const deleteAllBtn = document.getElementById('deleteAllBtn');
 
 if (importBtn) {
   importBtn.addEventListener('click', () => {
@@ -51,6 +52,32 @@ if (exportBtn) {
     } catch (err) {
       showToast('Export failed', 'danger');
     }
+  });
+}
+
+if (deleteAllBtn) {
+  deleteAllBtn.addEventListener('click', () => {
+    const dialog = document.createElement('sl-dialog');
+    dialog.label = 'Delete All Data';
+    dialog.innerHTML = `
+      <div style="margin-bottom:1rem;">Are you sure you want to <b>permanently delete</b> all projects and tasks? This action cannot be undone.</div>
+      <sl-button slot="footer" variant="danger" id="confirmDeleteBtn">Delete All Data</sl-button>
+      <sl-button slot="footer" variant="neutral" id="cancelDeleteBtn">Cancel</sl-button>
+    `;
+    document.body.appendChild(dialog);
+    dialog.show();
+    dialog.querySelector('#cancelDeleteBtn').addEventListener('click', () => dialog.hide());
+    dialog.querySelector('#confirmDeleteBtn').addEventListener('click', async () => {
+      dialog.hide();
+      try {
+        const res = await fetch(`${API_URL}/admin/delete_all/`, { method: 'POST' });
+        if (!res.ok) throw new Error('Delete failed');
+        showToast('All data deleted', 'success');
+      } catch (err) {
+        showToast('Delete failed', 'danger');
+      }
+      document.body.removeChild(dialog);
+    });
   });
 }
 

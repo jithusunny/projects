@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 import csv
 from io import StringIO
 import uuid
+from sqlalchemy import text
 
 router = APIRouter()
 
@@ -40,4 +41,14 @@ async def import_tables(files: list[UploadFile] = File(...), db: AsyncSession = 
                     db.add(obj)
         return {"imported": [file.filename for file in files]}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Import failed: {str(e)}") 
+        raise HTTPException(status_code=400, detail=f"Import failed: {str(e)}")
+
+@router.post("/delete_all/", tags=["admin"])
+async def delete_all_data(db: AsyncSession = Depends(get_db)):
+    try:
+        async with db.begin():
+            await db.execute(text("DELETE FROM tasks"))
+            await db.execute(text("DELETE FROM projects"))
+        return {"message": "All data deleted"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Delete failed: {str(e)}") 
