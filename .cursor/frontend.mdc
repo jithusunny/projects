@@ -1,0 +1,151 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+## 1. Vision / Philosophy / Design Principles
+
+- Minimal, powerful, and expressive
+- Declarative over imperative
+- Explicit > Implicit
+- Reuse everything, repeat nothing
+- Components must be composable, modular, and standalone
+- Structure must be clear to both humans and AI
+- Styling must be functional, not ornamental
+- The codebase should be visually and structurally harmonious
+- Working on this should feel fun, clean, and poetic—not chaotic
+- Accessibility is non-negotiable: keyboard nav, tabindex, proper ARIA, role, semantic HTML, etc.
+
+---
+
+## 2. Strategy
+- Use Tailwind + BEM for styling and structure
+- Use Shoelace for accessible UI components
+- Use Handlebars for layout and content partials
+- Use vanilla JS modules and web components for behavior and structure
+- Forms are built from JSON schema using a mapper for DRYness and flexibility
+- Each layer should be logically separate and easy to reason about
+
+---
+
+## 3. Architecture Do's and Don'ts
+
+- do use Handlebars partials for every repeated UI block
+- do use Tailwind for all styling needs
+- do name structure using BEM, even if you style it with Tailwind
+- do isolate all logic into JS modules
+- do keep files short and specific to their role
+- do structure HTML so it reads like a component tree
+- do write JS that reacts to structure, not DOM queries
+- do ensure keyboard navigability in all components
+- do keep the UI experience minimal but readable and elegant
+
+- don't use inline styles or arbitrary classes
+- don't use custom CSS unless absolutely necessary
+- don't create visual elements that serve no clarity purpose
+- don't let JS touch the DOM randomly or globally
+- don't mix behavior into templates
+- don't hardcode repeated markup
+- don't build layout logic into JS
+
+---
+
+## 4. Toolset
+
+- handlebars: template rendering, partial reuse
+- tailwind: utility-based styling
+- bem: structure labeling only, not styling
+- shoelace: accessible and ready-to-use components
+- web components: reusable logic + DOM encapsulation
+- vanilla js modules: all logic is modular and scoped
+- json schema + mapper: declarative form generation
+- vite: dev server, live reload, module support, production builds
+- playwright: e2e testing
+
+---
+
+## 5. Tool Usage Guidelines
+
+- shoelace
+  - use for common interactive elements: buttons, dialogs, inputs, badges, modals
+  - use slot-based structure (e.g. slot="footer")
+  - combine with Tailwind for layout, spacing
+  - example:
+    - <sl-dialog label="New Project"><form slot="body">...</form></sl-dialog>
+
+- tailwind
+  - use exclusively for all styling
+  - never write custom CSS unless tailwind can't express it
+  - combine utility classes with BEM structure
+  - example:
+    - <div class="card p-4 bg-white shadow-md">...</div>
+
+- bem
+  - use for structure only, not for styling
+  - block: reusable component (e.g. card)
+  - element: inner piece (e.g. card__title)
+  - modifier: variation (e.g. card--highlighted)
+  - example:
+    - <div class="card card--large"><h2 class="card__title">Title</h2></div>
+
+- handlebars
+  - define all layouts and reusable blocks as .hbs partials
+  - use helpers for transforming values (e.g. status to badge variant)
+  - example:
+    - {{> card project=projectData}}
+
+- json schema + mapper
+  - only for forms and dynamic config-based UIs
+  - must render via Shoelace components
+  - should not be used for main content like cards or lists
+  - example schema:
+    - { "type": "text", "label": "Project Name", "name": "title" }
+
+- js
+  - use modules and import/export
+  - organize by purpose, not by type
+  - no global event listeners or DOM mutations
+  - all logic must live in context-aware components or modules
+
+- vite
+  - used for dev (`npm run dev`) and build (`npm run build`)
+  - outputs to dist/
+  - supports import/export and hot reload
+
+- playwright
+  - used for testing real user flows, not implementation
+  - use data-testid attributes for targeting
+  - example:
+    - await page.click('[data-testid="create-task"]')
+
+---
+
+## 6. File Structure
+frontend/
+├── index.html vite entry
+├── main.js app bootstrap + module imports
+├── components/ web components (project-card.js, chat-pane.js)
+├── templates/ handlebars partials (card.hbs, nav.hbs)
+├── pages/ handlebars full pages (projects.hbs, tasks.hbs)
+├── data/ data and schema files
+│ └── schema/ json form schemas
+├── styles.css tailwind base config
+├── vite.config.js vite config
+└── dist/ production output
+
+
+---
+
+## 7. Testing
+
+- use Playwright for end-to-end testing of:
+  - form submission
+  - modal interactions
+  - card rendering
+  - navigation toggle
+- do not test internal logic directly
+- use data-testid attributes for selecting elements
+- verify UI behavior, not internal implementation
+- example test:
+  - await page.click('[data-testid="task-complete-checkbox"]')
+  - await expect(page.locator('[data-testid="task-status"]')).toHaveText("Done")
