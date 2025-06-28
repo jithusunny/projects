@@ -41,7 +41,9 @@ export class BreadcrumbTrail extends LitElement {
   }
 
   render() {
-    if (!this.items?.length) return html``;
+    // Don't render if no items or only one item
+    if (!this.items?.length || this.items.length === 1) return html``;
+    
     const lastIndex = this.items.length - 1;
     return html`<nav>
       ${this.items.map((item, idx) => html`

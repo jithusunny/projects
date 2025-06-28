@@ -25,8 +25,16 @@ export class AppShell extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--space-3);
       border-bottom: var(--border-1);
+      background: var(--color-bg);
+    }
+    header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding-top: var(--space-3);
+      padding-bottom: var(--space-3);
     }
     a.logo-link {
       font-size: var(--font-size-h3);
@@ -52,12 +60,16 @@ export class AppShell extends LitElement {
       gap: var(--space-2);
     }
     nav {
-      padding: var(--space-2) var(--space-3) var(--space-1);
+      background: var(--grey-50);
+    }
+    nav .container {
+      padding-top: var(--space-2);
+      padding-bottom: var(--space-2);
     }
     main {
       flex: 1;
       overflow: auto;
-      padding: var(--space-3);
+      background: var(--grey-50);
     }
     a.logo-link {
       text-decoration: none;
@@ -95,28 +107,38 @@ export class AppShell extends LitElement {
       const form = this.shadowRoot.querySelector('task-form');
       form.show({ projectId: e.detail.task.project_id ?? null, task: e.detail.task });
     });
+    this.addEventListener('update-navigation', (e) => {
+      this.pageTitle = e.detail.title;
+      this.breadcrumbs = e.detail.breadcrumbs;
+    });
   }
 
   render() {
     return html`
       <header>
-        <div class="left">
-          <a class="logo-link" href="/" @click=${this._navigate}>
-            <sl-icon name="layers"></sl-icon>
-            Projects
-          </a>
-        </div>
-        <div class="title">${this.pageTitle}</div>
-        <div class="right">
-          <plus-menu></plus-menu>
-          <sl-icon-button name="gear" label="Settings" href="/settings" @click=${this._navigate}></sl-icon-button>
+        <div class="container">
+          <div class="left">
+            <a class="logo-link" href="/" @click=${this._navigate}>
+              <sl-icon name="stars"></sl-icon>
+              Jisukapp
+            </a>
+          </div>
+          <div class="title">${this.pageTitle}</div>
+          <div class="right">
+            <plus-menu></plus-menu>
+            <sl-icon-button name="gear" label="Settings" href="/settings" @click=${this._navigate}></sl-icon-button>
+          </div>
         </div>
       </header>
       <nav>
-        <breadcrumb-trail .items=${this.breadcrumbs}></breadcrumb-trail>
+        <div class="container">
+          <breadcrumb-trail .items=${this.breadcrumbs}></breadcrumb-trail>
+        </div>
       </nav>
       <main>
-        <slot></slot>
+        <div class="container">
+          <slot></slot>
+        </div>
       </main>
       <project-form></project-form>
       <task-form></task-form>

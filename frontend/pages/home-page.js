@@ -10,35 +10,37 @@ export class HomePage extends LitElement {
     .cards {
       display: flex;
       flex-wrap: wrap;
-      justify-content: flex-start;
-      align-items: flex-start;
+      justify-content: center;
       gap: var(--space-5);
-      margin-top: var(--space-6);
+      margin-top: var(--space-8);
     }
     .menu-item {
-      flex: 0 1 12rem;
-      max-width: 12rem;
+      flex: 0 1 var(--space-12);
+      max-width: var(--space-12);
       text-decoration: none;
       color: inherit;
       background: var(--color-bg);
       border: var(--border-1);
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-md);
-      padding: var(--space-4);
+      padding: var(--space-6);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--space-2);
+      gap: var(--space-3);
       transition: box-shadow 0.2s ease;
     }
     .menu-item:hover {
       box-shadow: var(--shadow-lg);
     }
     sl-icon {
-      font-size: var(--icon-lg);
-      width: var(--icon-lg);
-      height: var(--icon-lg);
+      font-size: var(--space-6);
+      width: var(--space-6);
+      height: var(--space-6);
       color: var(--color-primary);
+    }
+    span {
+      font-size: var(--font-size-lg);
     }
   `];
 

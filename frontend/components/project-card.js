@@ -11,9 +11,20 @@ export class ProjectCard extends LitElement {
   };
 
   static styles = [sharedStyles, css`
+    :host {
+      display: block;
+      height: 100%;
+    }
+    a {
+      display: block;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
     sl-card {
       cursor: pointer;
-      height: var(--card-h);
+      height: 100%;
+      min-height: var(--space-11);
       overflow: hidden;
       width: 100%;
     }
@@ -21,11 +32,13 @@ export class ProjectCard extends LitElement {
       display: flex;
       flex-direction: column;
       height: 100%;
-      padding: var(--space-3) var(--space-3) var(--space-2);
+      padding: var(--space-4);
+      background: var(--color-bg);
     }
     sl-card::part(header) {
       padding: 0;
-      margin-bottom: calc(var(--space-2) + 2px);
+      margin-bottom: var(--space-3);
+      font-size: var(--font-size-lg);
       font-weight: var(--fw-medium);
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -46,6 +59,7 @@ export class ProjectCard extends LitElement {
       display: flex;
       align-items: center;
       gap: var(--space-1);
+      margin-top: auto;
     }
     .meta sl-icon {
       font-size: var(--icon-sm);
@@ -53,10 +67,6 @@ export class ProjectCard extends LitElement {
       height: var(--icon-sm);
     }
     .meta span { font-size: var(--font-size-small); }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
     p.description {
       font-size: var(--font-size-small);
       color: var(--grey-600);
@@ -70,7 +80,8 @@ export class ProjectCard extends LitElement {
     }
     sl-card::part(footer) {
       border: none;
-      padding: var(--space-1) 0 0;
+      padding: var(--space-2) 0 0;
+      margin-top: auto;
     }
   `];
 

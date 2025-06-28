@@ -10,8 +10,14 @@ export class ProjectsPage extends LitElement {
   static styles = [sharedStyles, css`
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-      gap: var(--space-3);
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+      align-items: stretch;
+    }
+    project-card {
+      min-width: 0;
+      height: 100%;
     }
   `];
 
@@ -53,11 +59,13 @@ export class ProjectsPage extends LitElement {
   }
 
   render() {
-    if (this.loading) return html`<p>Loading...</p>`;
-    if (this.error) return html`<p>Error: ${this.error}</p>`;
-    if (!this.projects.length) return html`<p>No projects yet.</p>`;
-    return html`<div class="grid">
-      ${this.projects.map(p => html`<project-card .project=${p}></project-card>`)}
+    if (this.loading) return html`<div class="container"><p>Loading...</p></div>`;
+    if (this.error) return html`<div class="container"><p>Error: ${this.error}</p></div>`;
+    if (!this.projects.length) return html`<div class="container"><p>No projects yet.</p></div>`;
+    return html`<div class="container">
+      <div class="grid">
+        ${this.projects.map(p => html`<project-card .project=${p}></project-card>`)}
+      </div>
     </div>`;
   }
 }
