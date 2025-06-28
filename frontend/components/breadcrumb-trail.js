@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { sharedStyles } from '../styles/shared-styles.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
 export class BreadcrumbTrail extends LitElement {
@@ -6,27 +7,33 @@ export class BreadcrumbTrail extends LitElement {
     items: { type: Array },
   };
 
-  static styles = css`
+  static styles = [sharedStyles, css`
     nav {
       display: flex;
       align-items: center;
       gap: var(--space-1);
-      font-size: 0.85rem;
+      font-size: var(--font-size-small);
       margin-top: var(--space-2);
     }
     a {
       color: var(--color-primary);
       text-decoration: none;
+      display: flex;
+      align-items: center;
     }
     sl-icon {
-      font-size: 0.7rem;
-      color: #999;
+      font-size: var(--font-size-small);
+      color: var(--grey-400);
+      position: relative;
+      top: 1px;
     }
     span.current {
-      color: #555;
-      font-weight: 500;
+      color: var(--grey-600);
+      font-weight: var(--fw-medium);
+      display: flex;
+      align-items: center;
     }
-  `;
+  `];
 
   constructor() {
     super();
@@ -39,7 +46,7 @@ export class BreadcrumbTrail extends LitElement {
     return html`<nav>
       ${this.items.map((item, idx) => html`
         ${idx > 0 ? html`<sl-icon name="chevron-right"></sl-icon>` : ''}
-        ${idx === lastIndex ? html`<span class="current">${item.label}</span>` : html`<a href="${item.href}" @click=${this._navigate}>${item.label}</a>`}
+        ${idx === lastIndex ? html`<span class="current">${item.label}</span>` : html`<a href="${item.href}" class="clickable" tabindex="0" @click=${this._navigate}>${item.label}</a>`}
       `)}
     </nav>`;
   }

@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { sharedStyles } from '../styles/shared-styles.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
@@ -9,7 +10,7 @@ export class ProjectCard extends LitElement {
     project: { type: Object },
   };
 
-  static styles = css`
+  static styles = [sharedStyles, css`
     sl-card {
       cursor: pointer;
       height: var(--card-h);
@@ -25,7 +26,7 @@ export class ProjectCard extends LitElement {
     sl-card::part(header) {
       padding: 0;
       margin-bottom: calc(var(--space-2) + 2px);
-      font-weight: 500;
+      font-weight: var(--fw-medium);
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
@@ -39,24 +40,26 @@ export class ProjectCard extends LitElement {
       justify-content: flex-start;
       padding: 0;
     }
-    sl-card::part(base):hover {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
     .meta {
-      font-size: var(--font-sm);
-      color: #777;
+      font-size: var(--font-size-small);
+      color: var(--grey-500);
       display: flex;
       align-items: center;
       gap: var(--space-1);
     }
-    .meta span { font-size: 0.9em; }
+    .meta sl-icon {
+      font-size: var(--icon-sm);
+      width: var(--icon-sm);
+      height: var(--icon-sm);
+    }
+    .meta span { font-size: var(--font-size-small); }
     a {
       text-decoration: none;
       color: inherit;
     }
     p.description {
-      font-size: var(--font-sm);
-      color: #555;
+      font-size: var(--font-size-small);
+      color: var(--grey-600);
       margin: 0;
       margin-bottom: var(--space-2);
       display: -webkit-box;
@@ -69,12 +72,12 @@ export class ProjectCard extends LitElement {
       border: none;
       padding: var(--space-1) 0 0;
     }
-  `;
+  `];
 
   render() {
     if (!this.project) return html``;
     const { id, name, description, created_at } = this.project;
-    return html`<a href="/projects/${id}" @click=${this._navigate}>
+    return html`<a href="/projects/${id}" class="clickable" tabindex="0" @click=${this._navigate}>
       <sl-card>
         <div slot="header">${name}</div>
         <div class="body">

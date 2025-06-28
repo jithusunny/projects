@@ -144,36 +144,48 @@ Page JS is code-split: fetched only the first time it’s needed.
 Navigation is instant after the first fetch because the element class is cached.
 Lit handles the DOM diffing; you mostly change two fields (currentViewTag, params) and call requestUpdate()—the rest is automatic.
 
-# 12 Styling
 
-- rem-First Only: use rem tokens everywhere; only px for 1px borders and fixed icons.
+# 12. Styling
+- rem-First & Token-Only: All dimensions (spacing, font sizes, breakpoints) use rem tokens; use px only for 1px borders and fixed icon dimensions. Never hard-code numbers or colors—always var(--…).
 
-- Token-Exclusive: no literals—always var(--…) for spacing, type, color, shadows, radii, borders, breakpoints, z-index, opacity, icon sizes.
+- Global Tokens: Define your scale in tokens.css (space, type, color, grey palette, shadows, radii, borders, breakpoints, z-index, opacity, icon sizes).
 
-- Global Container: wrap every <header>, <nav>, <main> (and page components) in .container { max-width: var(--container-max); margin: 0 auto; padding: var(--space-5) var(--space-4); }.
+-Shared Styles Module:
+    -Create src/styles/shared-styles.js exporting a sharedStyles CSS fragment that includes:
+        .container wrapper (max-width, centering, padding)
+        Base typography (:host, h1–h3, p, small)
+        Gap-based helpers (.flex-gap, .grid-gap)
+        Card defaults (.card, sl-card::part(base))
+        Hover & focus states for .clickable and cards
+        Icon sizing classes (.icon-sm/md/lg)
+        Background tone for the host
 
-- Background Tone: body gets background: var(--grey-50) so white cards pop.
+    Import in every Lit component:
+        import { LitElement, css, html } from 'lit';
+        import { sharedStyles }      from '../styles/shared-styles.js';
 
-- Gap-Based Layout: always gap: var(--space-*) in flex/grid—no individual margins.
+        export class MyComponent extends LitElement {
+        static styles = [
+            sharedStyles,
+            css`/* component-specific CSS */`
+        ];
+        /* … */
+        }
 
-- Vertical Rhythm: sections and headings use consistent token margins (e.g. h2 { margin-bottom: var(--space-4); }, section { margin-top: var(--space-6); }).
+- Gap-Based Layout & Container: Use gap: var(--space-*) for all flex/grid. Wrap every <header>, <nav>, <main> and page root in <div class="container">…</div>.
 
-- Semantic Typography: map <h1>–<h3>, <p>, <small> to --font-size-*, --line-height-*, --fw-* tokens via global base styles.
+- Semantic Typography: Rely on sharedStyles’ h1–h3, p, small rules. No inline font-size or weight—use --font-size-*, --line-height-*, --fw-* tokens.
 
-- Header Grid: inside <header>, use .container { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); } to centre the title.
+- Color Roles & Background: Text, surfaces, accents, danger, neutrals exclusively via --color-* and --grey-*; body background set in sharedStyles to --grey-50.
 
-- Card Consistency: all cards use <sl-card> (or .card) with box-shadow: var(--shadow-md), border: var(--border-1), border-radius: var(--radius-md), padding: var(--space-4).
+- Elevation & Borders: Shadows only via --shadow-sm/md/lg; borders via --border-1. No literal box-shadow or rgba() declarations.
 
-- Section Separation: after every <h2> or <h3>, enforce margin-bottom: var(--space-5) to group content blocks.
+- Corner Radius: Use only --radius-sm/md/lg.
 
-- Hover & Focus: every clickable (cards, list items, links) has :hover { box-shadow: var(--shadow-lg) } and :focus { outline: 2px solid var(--color-primary); outline-offset: var(--space-1) }.
+- Icons & Hit Targets: Size icons with --icon-sm/md/lg; ensure every interactive (button, a, Shoelace controls, .clickable elements) has min-width/min-height: var(--space-5) and inherits hover/focus from sharedStyles.
 
-- Icons & Hit Areas: icons sized with --icon-*; all interactive elements get min-width/min-height: var(--space-5) for 44px+ touch targets.
+- Responsive Breakpoints: Wrap viewport-specific tweaks in media queries at --breakpoint-sm, --breakpoint-md, --breakpoint-lg.
 
-- Responsive Breakpoints: use media queries at --breakpoint-sm/md/lg for grid-column counts, container padding, font adjustments.
+- Scoped Component Styles: All CSS lives inside each component’s shadow DOM via static styles = [ sharedStyles, css… ]. No global style leakage.
 
-- Shoelace Theming: override only via ::part() + tokens; never deep-select.
-
-- Scoped Styles & API: every Lit component uses Shadow DOM + static styles; exposes slots, props, dispatches CustomEvents, and includes data-testid.
-
-- Accessibility: semantic HTML, ARIA roles, proper tabindex on custom components.
+- State & Accessibility: Define hover, focus, active, disabled styles using tokens; use semantic HTML, ARIA roles, keyboard-focus outlines and data-testid for test selectors.

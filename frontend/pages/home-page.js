@@ -1,48 +1,60 @@
 import { LitElement, html, css } from 'lit';
-import '@shoelace-style/shoelace/dist/components/card/card.js';
+import { sharedStyles } from '../styles/shared-styles.js';
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
 export class HomePage extends LitElement {
   static pageTitle = 'Home';
   static breadcrumbItems = [];
 
-  static styles = css`
+  static styles = [sharedStyles, css`
     .cards {
       display: flex;
-      justify-content: flex-start;
-      gap: var(--space-5);
-      margin-top: var(--space-5);
       flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: var(--space-5);
+      margin-top: var(--space-6);
     }
-    a.card {
-      flex: 0 0 200px;
+    .menu-item {
+      flex: 0 1 12rem;
+      max-width: 12rem;
       text-decoration: none;
       color: inherit;
+      background: var(--color-bg);
+      border: var(--border-1);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+      transition: box-shadow 0.2s ease;
     }
-    sl-card { cursor: pointer; min-height: var(--card-h); width: 100%; }
-    sl-card::part(base):hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .tile { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding: var(--space-4); }
-    sl-icon { font-size: 2rem; color: var(--color-primary); }
-  `;
+    .menu-item:hover {
+      box-shadow: var(--shadow-lg);
+    }
+    sl-icon {
+      font-size: var(--icon-lg);
+      width: var(--icon-lg);
+      height: var(--icon-lg);
+      color: var(--color-primary);
+    }
+  `];
 
   render() {
     return html`
-      <div class="cards">
-        <a class="card" href="/projects" @click=${this._navigate}>
-          <sl-card>
-            <div class="tile" data-testid="link-projects">
-              <sl-icon name="files"></sl-icon>
-              <span>Projects</span>
-            </div>
-          </sl-card>
-        </a>
-        <a class="card" href="/tasks" @click=${this._navigate}>
-          <sl-card>
-            <div class="tile" data-testid="link-tasks">
-              <sl-icon name="check2-square"></sl-icon>
-              <span>Tasks</span>
-            </div>
-          </sl-card>
-        </a>
+      <div class="container">
+        <div class="cards">
+          <a class="menu-item clickable" href="/projects" tabindex="0" @click=${this._navigate} data-testid="link-projects">
+            <sl-icon name="files"></sl-icon>
+            <span>Projects</span>
+          </a>
+          <a class="menu-item clickable" href="/tasks" tabindex="0" @click=${this._navigate} data-testid="link-tasks">
+            <sl-icon name="check2-square"></sl-icon>
+            <span>Tasks</span>
+          </a>
+        </div>
       </div>`;
   }
 

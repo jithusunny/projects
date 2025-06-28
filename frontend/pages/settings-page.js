@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { sharedStyles } from '../styles/shared-styles.js';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
@@ -9,18 +10,18 @@ export class SettingsPage extends LitElement {
   static pageTitle = 'Settings';
   static breadcrumbItems = [{ label: 'Settings', href: '/settings' }];
 
-  static styles = css`
+  static styles = [sharedStyles, css`
     .grid {
       display: grid;
       gap: var(--space-4);
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
     }
     sl-card::part(base) {
       display: flex;
       flex-direction: column;
       gap: var(--space-3);
     }
-  `;
+  `];
 
   render() {
     return html`

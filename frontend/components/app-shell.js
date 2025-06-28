@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { sharedStyles } from '../styles/shared-styles.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
@@ -14,32 +15,36 @@ export class AppShell extends LitElement {
     breadcrumbs: { type: Array },
   };
 
-  static styles = css`
+  static styles = [sharedStyles, css`
     :host {
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: var(--color-bg);
-      color: var(--color-fg);
     }
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: var(--space-3);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      border-bottom: var(--border-1);
     }
     a.logo-link {
-      font-size: var(--font-lg);
+      font-size: var(--font-size-h3);
+      line-height: var(--line-height-md);
     }
     sl-icon-button::part(base), plus-menu sl-icon-button::part(base) {
-      font-size: 1.15em;
+      font-size: var(--space-4);
+      padding: var(--space-2);
+    }
+    sl-icon-button::part(base) sl-icon, plus-menu sl-icon-button::part(base) sl-icon {
+      width: var(--space-4);
+      height: var(--space-4);
     }
     .title {
       flex: 1;
       text-align: center;
-      font-weight: 600;
-      font-size: 1.1rem;
+      font-weight: var(--fw-semibold);
+      font-size: var(--font-size-h3);
     }
     .left, .right {
       display: flex;
@@ -62,7 +67,14 @@ export class AppShell extends LitElement {
       align-items: center;
       gap: var(--space-1);
     }
-  `;
+    a.logo-link sl-icon {
+      font-size: var(--font-size-h3);
+      width: var(--font-size-h3);
+      height: var(--font-size-h3);
+      display: flex;
+      align-items: center;
+    }
+  `];
 
   constructor() {
     super();

@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { sharedStyles } from '../styles/shared-styles.js';
 import { fetchProjects } from '../services/projects.js';
 import '../components/project-card.js';
 
@@ -6,13 +7,13 @@ export class ProjectsPage extends LitElement {
   static pageTitle = 'Projects';
   static breadcrumbItems = [{ label: 'Projects', href: '/projects' }];
 
-  static styles = css`
+  static styles = [sharedStyles, css`
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
       gap: var(--space-3);
     }
-  `;
+  `];
 
   constructor() {
     super();

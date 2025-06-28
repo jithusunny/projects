@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { sharedStyles } from '../styles/shared-styles.js';
 import { fetchProject, fetchProjectTasks, deleteProject } from '../services/projects.js';
 import { deleteTask } from '../services/tasks.js';
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
@@ -11,20 +12,19 @@ import '../components/task-list.js';
 export class ProjectDetailPage extends LitElement {
   static pageTitle = 'Project Details';
 
-  static styles = css`
+  static styles = [sharedStyles, css`
     :host {
       display: block;
     }
-    .container { max-width: 960px; margin: 0 auto; padding: var(--space-4) var(--space-3); }
     h1 {
-      margin: 0;
-      font-size: var(--font-lg);
-      font-weight: 500;
+      font-size: var(--font-size-h2);
+      line-height: var(--line-height-lg);
+      font-weight: var(--fw-medium);
     }
     p.description { margin-top: var(--space-2); margin-bottom: var(--space-4); max-width: 60ch; }
-    h2 { font-weight: 600; margin: var(--space-3) 0 var(--space-2); }
+    h2 { font-weight: var(--fw-semibold); }
     task-list { margin-top: var(--space-1); }
-  `;
+  `];
 
   static get properties() {
     return {
@@ -124,7 +124,7 @@ export class ProjectDetailPage extends LitElement {
         ${this.project.description ? html`<p class="description">${this.project.description}</p>` : ''}
 
         <h2>Tasks</h2>
-        ${this.tasks.length ? html`<sl-card style="background:var(--color-bg); box-shadow:0 1px 2px rgba(0,0,0,0.03); border:none;">
+        ${this.tasks.length ? html`<sl-card style="background:var(--color-bg); box-shadow:var(--shadow-sm); border:none;">
             <task-list .tasks=${this.tasks}></task-list>
           </sl-card>` : html`<p>No tasks yet.</p>`}
       </div>`;

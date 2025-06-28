@@ -14,12 +14,12 @@ export class TasksPage extends LitElement {
     }
     th, td {
       padding: var(--space-2);
-      border-bottom: 1px solid rgba(0,0,0,0.05);
+      border-bottom: var(--border-1);
     }
     th {
       text-align: left;
-      font-size: 0.85rem;
-      color: #666;
+      font-size: var(--font-size-small);
+              color: var(--grey-600);
     }
   `;
 
