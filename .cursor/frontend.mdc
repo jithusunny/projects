@@ -53,6 +53,7 @@ alwaysApply: false
 - Use div soup or hardcoded markup repetition 
 - Mix layout logic into JavaScript behavior files 
 - Leave fetches unguarded — always use `loading` and `error` guards in render()
+- Create own component, when shoelace has it.
 
 ---
 
@@ -89,10 +90,9 @@ alwaysApply: false
 ├── main.js                  # Router + component registration
 ├── /components              # All Lit components (project-card.js, chat-pane.js, etc.)
 ├── /pages                   # Route-level views (projects-page.js, tasks-page.js, etc.)
-├── /api                     # Data-fetching modules (project.js, task.js)
+├── /services                # Data-fetching modules (project.js, task.js)
 ├── /styles
 │   └── tokens.css           # CSS design tokens
-├── /context                 # Reserved for future state or context sharing
 ├── /utils                   # JS utility functions (formatting, logic, etc.)
 ├── vite.config.js
 └── /dist                    # Production output
@@ -137,3 +137,43 @@ alwaysApply: false
 
 ## 10. Disallowed Tools & Patterns
 We explicitly do not use or allow: React, Vue, Svelte, Angular, Tailwind, BEM, Handlebars, JSON schema-to-UI mappers, global state libraries (Redux, MobX, Zustand, etc.), or any abstraction that hides layout, logic, or markup clarity.
+
+# 11. Routing
+Only one page element lives inside <app-shell> at any moment.
+Page JS is code-split: fetched only the first time it’s needed.
+Navigation is instant after the first fetch because the element class is cached.
+Lit handles the DOM diffing; you mostly change two fields (currentViewTag, params) and call requestUpdate()—the rest is automatic.
+
+# 12 Styling
+
+- rem-First Only: use rem tokens everywhere; only px for 1px borders and fixed icons.
+
+- Token-Exclusive: no literals—always var(--…) for spacing, type, color, shadows, radii, borders, breakpoints, z-index, opacity, icon sizes.
+
+- Global Container: wrap every <header>, <nav>, <main> (and page components) in .container { max-width: var(--container-max); margin: 0 auto; padding: var(--space-5) var(--space-4); }.
+
+- Background Tone: body gets background: var(--grey-50) so white cards pop.
+
+- Gap-Based Layout: always gap: var(--space-*) in flex/grid—no individual margins.
+
+- Vertical Rhythm: sections and headings use consistent token margins (e.g. h2 { margin-bottom: var(--space-4); }, section { margin-top: var(--space-6); }).
+
+- Semantic Typography: map <h1>–<h3>, <p>, <small> to --font-size-*, --line-height-*, --fw-* tokens via global base styles.
+
+- Header Grid: inside <header>, use .container { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); } to centre the title.
+
+- Card Consistency: all cards use <sl-card> (or .card) with box-shadow: var(--shadow-md), border: var(--border-1), border-radius: var(--radius-md), padding: var(--space-4).
+
+- Section Separation: after every <h2> or <h3>, enforce margin-bottom: var(--space-5) to group content blocks.
+
+- Hover & Focus: every clickable (cards, list items, links) has :hover { box-shadow: var(--shadow-lg) } and :focus { outline: 2px solid var(--color-primary); outline-offset: var(--space-1) }.
+
+- Icons & Hit Areas: icons sized with --icon-*; all interactive elements get min-width/min-height: var(--space-5) for 44px+ touch targets.
+
+- Responsive Breakpoints: use media queries at --breakpoint-sm/md/lg for grid-column counts, container padding, font adjustments.
+
+- Shoelace Theming: override only via ::part() + tokens; never deep-select.
+
+- Scoped Styles & API: every Lit component uses Shadow DOM + static styles; exposes slots, props, dispatches CustomEvents, and includes data-testid.
+
+- Accessibility: semantic HTML, ARIA roles, proper tabindex on custom components.

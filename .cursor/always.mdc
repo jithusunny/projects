@@ -15,3 +15,8 @@ alwaysApply: true
 - whenever there is a significant change (add/modify/remove features/tools/endpoints/libraries/files/folders) update the project_context.mdc file suitably so that the file is uptodate
 - Always include the install command for any new external dependency introduced in code or instructions.
 - To see how to do common dev actions check the backend/README.md (or frontend/README.md)
+- refer to [frontend.mdc](mdc:.cursor/frontend.mdc) for any frontend code generation or editing, but only when making architectural, structural, or stylistic decisions - including:
+    - creating or updating components, pages, or layout structure
+    - choosing naming conventions, file placement, or folder structure
+    - applying styling, accessibility, or behavior patterns
+- if I say "eda mone" do what is mentioned in @create_rule.mdc

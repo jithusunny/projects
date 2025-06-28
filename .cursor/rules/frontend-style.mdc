@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Frontend Styling Addendum
+
+This rule refines the UI/UX conventions defined in [frontend.mdc](mdc:.cursor/frontend.mdc). All new or changed components **must** follow the directives below.
+
+## 1. Global Rhythm
+- Base spacing token is `var(--space-1)`; vertical gaps are integer multiples.
+- Card and grid items use fixed dimensions to prevent layout shift.
+
+## 2. Typography & Icons
+| Element                 | Font-weight | Extra rules                          |
+|-------------------------|-------------|--------------------------------------|
+| Primary page heading    | 600         |                                      |
+| Card title (sl-card)    | 500         | Truncate at 2 lines                  |
+| Body/description        | normal      | Truncate at 2 lines; tooltip full    |
+| Meta/time text          | var(--font-sm) | icon `vertical-align: middle`   |
+
+Icons scale ≈ 1.15× the adjacent text size.
+
+## 3. Shoelace Card Layout
+```
+slot="header"  ➜ title (2-line clamp)
+<default>       ➜ body/description (flex-column)
+slot="footer"  ➜ meta row (clock icon + fuzzy time)
+```
+- Remove internal separators: `border: none` on `::part(header|footer)`.
+- Internal padding: `top/side = var(--space-3)`, `bottom = var(--space-2)`.
+- Use flex inside `::part(base)` so footer sticks to the bottom even when body is empty.
+
+## 4. Utilities
+- Use `relativeTime()` from [`utils/format.js`](mdc:frontend/utils/format.js) for all human-friendly timestamps; add `title` attribute for the absolute date.
+
+## 5. Shell & Navigation
+- Logo text = "Projects"; size `var(--font-lg)`.
+- Action icons (create/settings) are 15 % larger than body text.
+- Breadcrumb trail gets `margin-top: var(--space-2)` below the page title; current crumb styled with `.current` (semi-bold, darker).
+
+## 6. Spacing Checklist
+- Header → Body gap: `var(--space-2)`
+- Body → Footer gap: `var(--space-1)`
+- Card grid gap: inherited from parent grid.
+
+## 7. Maintenance
+Remove or refactor any superseded styles immediately—**no dead or duplicate CSS**. Adhere to single-source design tokens in `/styles/tokens.css`.

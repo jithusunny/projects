@@ -1,0 +1,107 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 🧱 Backend Rules
+
+## 1. Philosophy
+
+- Minimal, clear, async-first backend
+- Clean separation of concerns: models, schemas, CRUD, API routes, utilities
+- No unnecessary abstractions; everything must be explicit, discoverable, and predictable
+- Code should be easy to read, modify, and extend — without surprises
+
+---
+
+## 2. Tech Stack
+
+- FastAPI for API framework
+- async SQLAlchemy + `asyncpg` for DB access
+- Alembic for DB migrations
+- PostgreSQL as the DB
+- Docker for local dev DB
+- Pydantic for request/response validation
+- `uv` for dependency management
+
+---
+
+## 3. Folder Structure (backend/)
+
+```
+backend/
+├── app/
+│   ├── api/         # Route definitions (FastAPI APIRouter instances)
+│   ├── crud/        # DB access logic per model
+│   ├── models/      # SQLAlchemy models
+│   ├── schemas/     # Pydantic models for request/response
+│   ├── utils/       # Helpers (e.g. CSV export, parsing)
+│   ├── database.py  # Connection/session management
+│   └── main.py      # FastAPI app creation + route inclusion
+├── alembic/         # DB migrations
+├── docker-compose.yml
+├── docker.env
+├── sample.env
+└── pyproject.toml
+```
+
+---
+
+## 4. Rules and Patterns
+
+### CRUD/API
+- Each model has matching `models/`, `schemas/`, `crud/`, and `api/` files
+- All DB interactions must go through `crud/`
+- Never call raw SQL or session methods in routes
+
+### Pydantic
+- Input = `BaseModel`, Output = `BaseModel`
+
+### Alembic
+- Use `alembic revision --autogenerate -m "..."` and inspect the diff before applying
+- Never modify existing migrations once committed
+
+### Datetimes
+- **All datetime fields must be timezone-aware**
+- Always use `datetime.now(timezone.utc)` or equivalent
+
+---
+
+## 5. API Design
+
+- All endpoints return JSON
+- Consistent route format:
+  - `/api/projects/` — GET, POST
+  - `/api/projects/{id}` — GET, PUT, DELETE
+  - `/api/projects/{id}/tasks` — GET, POST
+  - `/api/tasks/` — GET, POST
+  - `/api/tasks/{id}` — GET, PUT, DELETE
+  - `/api/admin/export` — GET
+  - `/api/admin/import` — POST
+- Use standard HTTP response codes and FastAPI's `HTTPException` with detail messages
+- Validate all input with Pydantic
+
+---
+
+## 6. Dev & Environment
+
+- Use `uv` to install Python deps: `uv pip install package`
+- Backend runs locally with Dockerized PostgreSQL
+- Use `.env` and `python-dotenv` to manage secrets/configs
+
+---
+
+## 7. Constraints
+
+- No ORM models outside `models/`
+- No business logic in API routes
+- No naive datetimes
+- No blocking IO (everything async)
+- No external service dependencies unless explicitly declared in setup
+
+---
+
+## 8. Testing (TBD)
+
+- Add pytest-based testing later if required
+- Rule will be updated when testing is introduced

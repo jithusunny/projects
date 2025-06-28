@@ -3,66 +3,70 @@ description:
 globs: 
 alwaysApply: false
 ---
-Project context for developers
+# 🧭 Project Rules
 
-vision
-- modular, minimal projects and tasks management app
-- projects can have tasks, tasks can also exist independently
-- clean, maintainable, extensible codebase
+## 1. Vision
 
-features
-- create/read/update/delete projects
-- create/read/update/delete tasks (standalone or under projects)
-- mark tasks as done, collapse done tasks
-- modern UI with Shoelace, Vite
-- backend API with FastAPI, async SQLAlchemy, PostgreSQL
-- DB migrations with Alembic
-- Dockerized DB for local dev
-- admin import/export (CSV, transactional, in UI)
-- Uniform UI: All main pages (including admin) use a shared layout, header, and consistent spacing with Shoelace components for a cohesive look and feel.
+- A modular, minimal, expressive app for managing projects and tasks
+- Designed for clarity, maintainability, and long-term extensibility
+- Modern frontend + backend with strong boundaries and a clean separation of concerns
+- System should feel fast, consistent, fun to work on — never bloated or chaotic
 
-main building blocks
-- backend: FastAPI, SQLAlchemy, asyncpg, Alembic, Pydantic, uv, Docker, python-dotenv
-- frontend: Vite, Shoelace, Node.js, npm
-- database: PostgreSQL
+---
 
-api endpoints
-- /api/projects/ [GET, POST] list/create projects
-- /api/projects/{project_id} [GET, PUT, DELETE] get/update/delete project
-- /api/projects/{project_id}/tasks [GET, POST] list/create tasks for project
-- /api/tasks/ [GET, POST] list/create standalone tasks
-- /api/tasks/{task_id} [GET, PUT, DELETE] get/update/delete task
-- /api/admin/export [GET] export all tables as CSV to exports/ directory
-- /api/admin/import [POST] import data from CSV
+## 2. Functional Scope
 
-models/schemas
-- Project: id, name, description, created_at, updated_at, tasks
-- Task: id, title, description, completed, created_at, updated_at, project_id
-- Pydantic schemas mirror models for validation and API
+### Core Entities
+- **Projects**: can contain multiple tasks
+- **Tasks**: can exist independently or belong to a project
 
-folder structure
-- backend/
-  - app/
-    - api/ (endpoints, routers)
-    - crud/ (CRUD logic)
-    - models/ (SQLAlchemy models)
-    - schemas/ (Pydantic schemas)
-    - utils/ (utility modules, e.g., export.py for CSV export)
-    - database.py (DB connection)
-    - main.py (FastAPI app)
-  - alembic/ (migrations)
-  - docker-compose.yml, docker.env, sample.env, pyproject.toml
-- frontend/
-  - pages/ (projects.js/html, tasks.js/html, project.js/html)
-  - main.js, index.html, package.json
+### Core Features
+- Create, read, update, delete projects
+- Create, read, update, delete tasks (standalone or under projects)
+- Mark tasks as done, toggle visibility of completed tasks
+- Admin import/export interface (CSV-based, via UI)
+- Cohesive and minimal UI using Shoelace design system
 
-notes
-- backend runs locally, DB in Docker
-- all dependencies managed with uv (backend) and npm (frontend)
-- use Shoelace components for UI, don't reinvent the wheel
-- see backend/README.md and frontend/README.md for setup and dev commands
-- Backend: Use `uv pip install <package>` for Python dependencies. See backend/README.md.
-- Frontend: Use `npm install <package>` for JS dependencies.
+---
 
-# coding guidelines
-- Always use explicit timezone handling for all date and time operations. Never use naive datetimes.
+## 3. Architectural Overview
+
+- **Frontend**
+  - Built with Web Components using Lit
+  - Uses Shoelace for ready UI
+  - Vite-based setup, tested via Playwright
+  - Full details in [frontend.mdc](mdc:.cursor/frontend.mdc)
+
+- **Backend**
+  - FastAPI + async SQLAlchemy + PostgreSQL
+  - DB migrations via Alembic
+  - Dockerized DB for local development
+  - Full details in [backend.mdc](mdc:.cursor/backend.mdc)
+
+---
+
+## 4. Design Philosophy
+
+- Component-first mindset: pages and views are just organized groups of reusable parts
+- Minimal, declarative UI with strict architectural consistency
+- Styling via design tokens (CSS variables), not utility classes or themes
+- Data access is explicit and direct — no magic context, no reactive black boxes
+- All code (frontend or backend) must follow written rules — Cursor and human alike
+
+---
+
+## 5. File Structure Overview
+
+- `backend/` — all backend logic and APIs  
+- `frontend/` — all UI, assets, and web components  
+- Each side enforces its own rule file ([backend.mdc](mdc:.cursor/backend.mdc), [frontend.mdc](mdc:.cursor/frontend.mdc))
+
+---
+
+## 6. Rules Enforcement
+
+- Cursor and developers must treat this file as the project’s contract
+- Refer to:
+  - [frontend.mdc](mdc:.cursor/frontend.mdc) when building or editing UI  
+  - [backend.mdc](mdc:.cursor/backend.mdc) when writing or updating backend logic
+- Do not bypass architectural boundaries unless explicitly approved
