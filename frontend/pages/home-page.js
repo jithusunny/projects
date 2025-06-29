@@ -10,13 +10,11 @@ export class HomePage extends LitElement {
     .cards {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: var(--space-5);
       margin-top: var(--space-8);
     }
     .menu-item {
-      flex: 0 1 var(--space-12);
-      max-width: var(--space-12);
+      flex: 0 1 300px;
       text-decoration: none;
       color: inherit;
       background: var(--color-bg);
