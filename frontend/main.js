@@ -55,13 +55,14 @@ class AppRoot extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener('popstate', this._onPopState);
-    this.addEventListener('app:navigate', () => this.handleNavigation());
+    window.addEventListener('app:navigate', this._onPopState);
     this.handleNavigation();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('popstate', this._onPopState);
+    window.removeEventListener('app:navigate', this._onPopState);
   }
 
   async handleNavigation() {
@@ -86,8 +87,8 @@ class AppRoot extends LitElement {
     let viewEl = null;
     if (ViewTag) {
       const tag = unsafeStatic(ViewTag);
-      // Spread params as individual attributes/properties
-      viewEl = staticHtml`<${tag} .params=${this.params} .projectId=${this.params.id}></${tag}>`;
+      // Pass route params to the view
+      viewEl = staticHtml`<${tag} .params=${this.params}></${tag}>`;
     }
 
     // Determine page title and breadcrumbs from component static props
@@ -97,9 +98,6 @@ class AppRoot extends LitElement {
       const Ctor = customElements.get(ViewTag);
       pageTitle = Ctor.pageTitle || '';
       breadcrumbs = Ctor.breadcrumbItems || [];
-      if (Ctor === customElements.get('project-detail-page')) {
-        // Special case for dynamic label maybe later
-      }
     }
 
     return baseHtml`<app-shell .pageTitle=${pageTitle} .breadcrumbs=${breadcrumbs}>${viewEl}</app-shell>`;

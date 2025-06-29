@@ -13,12 +13,11 @@ import '../components/task-list.js';
 export class ProjectDetailPage extends LitElement {
   static get properties() {
     return {
-      projectId: { type: String },
-      project: { type: Object },
-      tasks: { type: Array },
-      loading: { type: Boolean },
-      error: { type: String },
-      breadcrumbs: { type: Array },
+      params: { type: Object },
+      project: { type: Object, state: true },
+      tasks: { type: Array, state: true },
+      loading: { type: Boolean, state: true },
+      error: { type: String, state: true }
     };
   }
 
@@ -92,28 +91,32 @@ export class ProjectDetailPage extends LitElement {
     this.error = '';
   }
 
+  get projectId() {
+    return this.params?.id;
+  }
+
   connectedCallback() {
     super.connectedCallback();
     this.load();
-    window.addEventListener('task:created', this._onTaskCreated);
-    window.addEventListener('task:updated', this._onTaskCreated);
-    window.addEventListener('task:deleted', this._onTaskCreated);
+    window.addEventListener('task:created', this._onTaskChanged);
+    window.addEventListener('task:updated', this._onTaskChanged);
+    window.addEventListener('task:deleted', this._onTaskChanged);
     window.addEventListener('project:updated', this._onProjectUpdated);
     window.addEventListener('project:deleted', this._onProjectDeleted);
-    this.addEventListener('edit:task', e=> this._editTask(e.detail.task));
-    this.addEventListener('delete:task', e=> this._deleteTask(e.detail.task));
+    this.addEventListener('edit:task', e => this._editTask(e.detail.task));
+    this.addEventListener('delete:task', e => this._deleteTask(e.detail.task));
   }
 
   disconnectedCallback() {
-    window.removeEventListener('task:created', this._onTaskCreated);
-    window.removeEventListener('task:updated', this._onTaskCreated);
-    window.removeEventListener('task:deleted', this._onTaskCreated);
+    window.removeEventListener('task:created', this._onTaskChanged);
+    window.removeEventListener('task:updated', this._onTaskChanged);
+    window.removeEventListener('task:deleted', this._onTaskChanged);
     window.removeEventListener('project:updated', this._onProjectUpdated);
     window.removeEventListener('project:deleted', this._onProjectDeleted);
     super.disconnectedCallback();
   }
 
-  _onTaskCreated = (e) => {
+  _onTaskChanged = (e) => {
     if (!e.detail?.task) return;
     if (e.detail.task.project_id === this.projectId) this.load();
   }
@@ -125,7 +128,10 @@ export class ProjectDetailPage extends LitElement {
   _onProjectDeleted = (e) => {
     if (e.detail?.id === this.projectId) {
       window.history.pushState({}, '', '/projects');
-      window.dispatchEvent(new Event('popstate'));
+      this.dispatchEvent(new CustomEvent('app:navigate', { 
+        bubbles: true, 
+        composed: true 
+      }));
     }
   };
 
@@ -260,6 +266,12 @@ export class ProjectDetailPage extends LitElement {
       }));
     } catch (err) {
       console.error('Failed to delete project:', err);
+    }
+  }
+
+  willUpdate(changedProps) {
+    if (changedProps.has('params') && this.projectId) {
+      this.load();
     }
   }
 }

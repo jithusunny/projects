@@ -8,6 +8,7 @@ import './plus-menu.js';
 import './breadcrumb-trail.js';
 import './project-form.js';
 import './task-form.js';
+import './search-dialog.js';
 
 export class AppShell extends LitElement {
   static properties = {
@@ -100,6 +101,7 @@ export class AppShell extends LitElement {
     super();
     this.pageTitle = '';
     this.breadcrumbs = [];
+    this._handleKeyDown = this._handleKeyDown.bind(this);
     this.addEventListener('create:project', () => {
       this.shadowRoot.querySelector('project-form').show();
     });
@@ -121,6 +123,29 @@ export class AppShell extends LitElement {
     });
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('keydown', this._handleKeyDown);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('keydown', this._handleKeyDown);
+  }
+
+  _handleKeyDown(e) {
+    // Don't trigger if typing in an input field or if modifier keys are pressed
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.metaKey || e.ctrlKey || e.altKey) {
+      return;
+    }
+
+    // Open search dialog on '/' key
+    if (e.key === '/') {
+      e.preventDefault();
+      this._openSearch();
+    }
+  }
+
   render() {
     return html`
       <header>
@@ -138,6 +163,11 @@ export class AppShell extends LitElement {
             ${this.pageTitle}
           </div>
           <div class="right">
+            <sl-icon-button 
+              name="search" 
+              label="Search (Press '/' to open)"
+              @click=${this._openSearch}
+            ></sl-icon-button>
             <plus-menu></plus-menu>
             <sl-icon-button name="gear" label="Settings" href="/settings" @click=${this._navigate}></sl-icon-button>
           </div>
@@ -155,6 +185,7 @@ export class AppShell extends LitElement {
       </main>
       <project-form></project-form>
       <task-form></task-form>
+      <search-dialog></search-dialog>
     `;
   }
 
@@ -165,6 +196,10 @@ export class AppShell extends LitElement {
       window.history.pushState({}, '', href);
       this.dispatchEvent(new CustomEvent('app:navigate', { bubbles: true, composed: true }));
     }
+  }
+
+  _openSearch() {
+    this.shadowRoot.querySelector('search-dialog').show();
   }
 }
 
