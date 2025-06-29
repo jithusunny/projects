@@ -31,12 +31,12 @@ export class ProjectDetailPage extends LitElement {
       align-items: center;
       justify-content: space-between;
       gap: var(--space-4);
-      margin-bottom: var(--space-6);
+      margin: var(--space-3) 0 var(--space-4);
     }
     .description {
       color: var(--grey-600);
-      flex: 1;
       margin: 0;
+      flex: 1;
     }
     .tasks-section {
       background: var(--color-bg);
@@ -168,11 +168,11 @@ export class ProjectDetailPage extends LitElement {
         <div class="project-header">
           ${this.project.description ? html`
             <p class="description">${this.project.description}</p>
-          ` : ''}
+          ` : html`<div class="description"></div>`}
           <sl-dropdown class="actions-menu">
             <sl-button slot="trigger" size="small" variant="text">
               <sl-icon slot="prefix" name="gear"></sl-icon>
-              Project Settings
+              Settings
               <sl-icon slot="suffix" name="chevron-down"></sl-icon>
             </sl-button>
             <sl-menu @sl-select=${this._handleAction}>

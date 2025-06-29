@@ -53,6 +53,14 @@ export class AppShell extends LitElement {
       text-align: center;
       font-weight: var(--fw-semibold);
       font-size: var(--font-size-h3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+    .title sl-icon {
+      color: var(--grey-600);
+      font-size: var(--font-size-h3);
     }
     .left, .right {
       display: flex;
@@ -123,7 +131,12 @@ export class AppShell extends LitElement {
               Jisukapp
             </a>
           </div>
-          <div class="title">${this.pageTitle}</div>
+          <div class="title">
+            ${this.pageTitle === 'Projects' || window.location.pathname.startsWith('/projects/') ? html`
+              <sl-icon name="folder"></sl-icon>
+            ` : ''}
+            ${this.pageTitle}
+          </div>
           <div class="right">
             <plus-menu></plus-menu>
             <sl-icon-button name="gear" label="Settings" href="/settings" @click=${this._navigate}></sl-icon-button>
