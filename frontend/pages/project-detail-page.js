@@ -67,6 +67,20 @@ export class ProjectDetailPage extends LitElement {
     }
     .actions-menu::part(base) {
       color: var(--grey-700);
+      font-size: var(--font-size-small);
+    }
+    .actions-menu sl-icon {
+      font-size: var(--icon-sm);
+      width: var(--icon-sm);
+      height: var(--icon-sm);
+    }
+    .actions-menu sl-menu-item::part(base) {
+      font-size: var(--font-size-small);
+      color: var(--grey-600);
+      padding: var(--space-2) var(--space-3);
+    }
+    .actions-menu sl-menu-item::part(prefix) {
+      color: var(--grey-500);
     }
   `];
 
