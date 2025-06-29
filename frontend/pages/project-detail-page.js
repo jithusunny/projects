@@ -26,10 +26,17 @@ export class ProjectDetailPage extends LitElement {
     :host {
       display: block;
     }
+    .project-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
     .description {
       color: var(--grey-600);
-      max-width: 60ch;
-      margin-bottom: var(--space-6);
+      flex: 1;
+      margin: 0;
     }
     .tasks-section {
       background: var(--color-bg);
@@ -57,9 +64,6 @@ export class ProjectDetailPage extends LitElement {
     }
     task-list::part(task-item):hover {
       background-color: var(--grey-50);
-    }
-    .actions-menu {
-      margin-left: auto;
     }
     .actions-menu::part(base) {
       color: var(--grey-700);
@@ -147,27 +151,28 @@ export class ProjectDetailPage extends LitElement {
 
     return html`
       <div class="container">
-        <sl-dropdown class="actions-menu">
-          <sl-button slot="trigger" size="small" variant="text">
-            <sl-icon slot="prefix" name="gear"></sl-icon>
-            Project Settings
-            <sl-icon slot="suffix" name="chevron-down"></sl-icon>
-          </sl-button>
-          <sl-menu @sl-select=${this._handleAction}>
-            <sl-menu-item value="edit">
-              <sl-icon slot="prefix" name="pencil"></sl-icon>
-              Edit Project
-            </sl-menu-item>
-            <sl-menu-item value="delete">
-              <sl-icon slot="prefix" name="trash"></sl-icon>
-              Delete Project
-            </sl-menu-item>
-          </sl-menu>
-        </sl-dropdown>
-
-        ${this.project.description ? html`
-          <p class="description">${this.project.description}</p>
-        ` : ''}
+        <div class="project-header">
+          ${this.project.description ? html`
+            <p class="description">${this.project.description}</p>
+          ` : ''}
+          <sl-dropdown class="actions-menu">
+            <sl-button slot="trigger" size="small" variant="text">
+              <sl-icon slot="prefix" name="gear"></sl-icon>
+              Project Settings
+              <sl-icon slot="suffix" name="chevron-down"></sl-icon>
+            </sl-button>
+            <sl-menu @sl-select=${this._handleAction}>
+              <sl-menu-item value="edit">
+                <sl-icon slot="prefix" name="pencil"></sl-icon>
+                Edit Project
+              </sl-menu-item>
+              <sl-menu-item value="delete">
+                <sl-icon slot="prefix" name="trash"></sl-icon>
+                Delete Project
+              </sl-menu-item>
+            </sl-menu>
+          </sl-dropdown>
+        </div>
 
         <div class="tasks-section">
           <div class="tasks-header">
