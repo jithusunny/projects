@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Check the last few exchanges in the cursor conversations and last few commits and update these rule files as needed:
+- [project_context.mdc](mdc:.cursor/project_context.mdc)
+- [backend.mdc](mdc:.cursor/backend.mdc)
+- [frontend.mdc](mdc:.cursor/frontend.mdc)
+
+Rules are not changelog: 
+- It should not look like "fixed this", "updated that", etc.
+- It should look like rules: "be on left side while driving", "be on right while walking", etc.
+- It can also describe the state of things: "backend contains all backend logic and APIs", etc.
+- You can safely follow the content already found in the above files.
+- Be general enough to apply to even new cases of the same pattern, but be specific enough to be precise and useful. Strike a balance.
+- Missing an unimportant looking item is fine if you are not sure. But dont skip substantial, important ones.
+- While updating, make sure you are not adding the same point again, even if it is worded differently.
+- Also remove/update any parts that that got removed/updated.
+- Don't use markety, vague, fluffy language
+- Go for simple, intuitive, practical language. Yet be precise and accurate.
+- For example, "admin data management" is a bit vague whereas "data can be imported/exported/deleted in settings page" is precise. 
+- But use this smartly - sometimes being abstract is still clear.
+- Organize content cleanly. 
+- Dont repeat same info unnecessarily, even if worded differently.
+- Confirm before updating.
+
+For commits, to understand the commits not analyzed for rules check this (and also maintain):
+Checked till commit: a959b5f
+if the above is a placeholder, go for last 10 commits
+the above is the only thing to update in this rule file - [rules.mdc](mdc:.cursor/rules/rules.mdc)

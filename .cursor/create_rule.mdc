@@ -1,8 +1,0 @@
----
-description: 
-globs: 
-alwaysApply: false
----
-- when I say "dont repeat maga", you must analyse the issue that we just solved, see what shortcoming while coding/designing led to that. Phrase that in a general rule format and ask me whether to include that in the appropriate rule file in the appropriate place.
-
-Rule files are in .cursor folder
