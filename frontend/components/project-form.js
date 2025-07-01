@@ -44,7 +44,13 @@ export class ProjectForm extends LitElement {
   render() {
     const isEdit = !!this.editProject;
     return html`
-      <sl-dialog ?open=${this.open} label=${isEdit ? 'Edit Project' : 'New Project'} @sl-request-close=${this._onClose}>
+      <sl-dialog 
+        ?open=${this.open} 
+        label=${isEdit ? 'Edit Project' : 'New Project'} 
+        @sl-request-close=${this._onClose}
+        @sl-initial-focus=${this._onInitialFocus}
+        @keydown=${this._handleKeyDown}
+      >
         <sl-input 
           name="name" 
           label="Name" 
@@ -73,6 +79,30 @@ export class ProjectForm extends LitElement {
 
   _onClose() {
     this.open = false;
+    this.editProject = null;
+  }
+
+  _onInitialFocus(e) {
+    // Prevent default focus and set focus to name input
+    const nameInput = this.shadowRoot.querySelector('sl-input[name="name"]');
+    if (nameInput) {
+      e.preventDefault();
+      nameInput.focus();
+    }
+  }
+
+  _handleKeyDown(e) {
+    // Only handle Enter key
+    if (e.key !== 'Enter') return;
+
+    // Don't handle Enter if it's in a textarea or if any modifier keys are pressed
+    if (e.target.tagName.toLowerCase() === 'textarea' || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+
+    // Don't handle if it's in a select element or its children
+    if (e.target.closest('sl-select')) return;
+
+    e.preventDefault();
+    this._submit();
   }
 
   async _submit() {

@@ -167,6 +167,36 @@ export class AppShell extends LitElement {
       e.preventDefault();
       this._openSearch();
     }
+
+    // Create new project with 'p' key
+    if (e.key === 'p') {
+      e.preventDefault();
+      this.dispatchEvent(new CustomEvent('create:project', {
+        bubbles: true,
+        composed: true
+      }));
+    }
+
+    // Create new task with 't' key
+    if (e.key === 't') {
+      e.preventDefault();
+      const match = window.location.pathname.match(/^\/projects\/([\w-]+)/);
+      this.dispatchEvent(new CustomEvent('create:task', {
+        bubbles: true,
+        composed: true,
+        detail: { projectId: match ? match[1] : null }
+      }));
+    }
+
+    // Navigate to home page with 'h' key
+    if (e.key === 'h') {
+      e.preventDefault();
+      window.history.pushState({}, '', '/');
+      this.dispatchEvent(new CustomEvent('app:navigate', {
+        bubbles: true,
+        composed: true
+      }));
+    }
   }
 
   render() {

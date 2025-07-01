@@ -21,6 +21,34 @@ export class SettingsPage extends LitElement {
       flex-direction: column;
       gap: var(--space-3);
     }
+    .shortcuts {
+      margin-top: var(--space-6);
+    }
+    .shortcut-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-3) var(--space-6);
+      align-items: center;
+    }
+    .key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 var(--space-2);
+      background: var(--grey-100);
+      border: var(--border-1);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: var(--font-size-small);
+      color: var(--grey-700);
+      box-shadow: var(--shadow-sm);
+    }
+    .description {
+      color: var(--grey-700);
+      font-size: var(--font-size-small);
+    }
   `];
 
   render() {
@@ -41,6 +69,29 @@ export class SettingsPage extends LitElement {
           <strong>Delete All Data</strong>
           <sl-button variant="danger" @click=${this._confirmDelete}>Delete</sl-button>
         </sl-card>
+      </div>
+
+      <div class="shortcuts">
+        <h2>Keyboard Shortcuts</h2>
+        <div class="shortcut-grid">
+          <span class="key">/</span>
+          <span class="description">Open search</span>
+
+          <span class="key">p</span>
+          <span class="description">Create new project</span>
+
+          <span class="key">t</span>
+          <span class="description">Create new task</span>
+
+          <span class="key">h</span>
+          <span class="description">Go to home page</span>
+
+          <span class="key">Delete</span>
+          <span class="description">Delete selected project or task</span>
+
+          <span class="key">Enter</span>
+          <span class="description">Open selected item</span>
+        </div>
       </div>
 
       <sl-dialog label="Confirm Delete" id="confirmDlg">
