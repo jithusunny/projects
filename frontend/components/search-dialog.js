@@ -14,7 +14,10 @@ export class SearchDialog extends LitElement {
     results: { type: Array },
     loading: { type: Boolean },
     error: { type: String },
-    recentItems: { type: Array }
+    recentItems: { type: Array },
+    selectedIndex: { type: Number },
+    showLoading: { type: Boolean },
+    hasSearched: { type: Boolean }
   };
 
   static styles = [sharedStyles, css`
@@ -79,11 +82,21 @@ export class SearchDialog extends LitElement {
       border-left: 2px solid transparent;
       outline: none;
     }
-    .result-item:hover,
-    .result-item:focus,
+    
+    /* Light highlight for mouse hover */
+    .result-item:hover {
+      background: var(--grey-50);
+    }
+    
+    /* Stronger highlight for keyboard selection */
     .result-item.selected {
       background: var(--grey-100);
       border-left-color: var(--color-primary);
+    }
+    
+    /* Remove focus outline since we're using border-left for focus indication */
+    .result-item:focus {
+      outline: none;
     }
     .result-item sl-icon {
       color: var(--grey-600);
@@ -157,6 +170,30 @@ export class SearchDialog extends LitElement {
       font-weight: var(--fw-medium);
       background: var(--grey-50);
       border-bottom: var(--border-1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 32px;
+    }
+    .loading-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--grey-200);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin-left: var(--space-2);
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .results-container {
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+    }
+    .results-list {
+      flex: 1;
     }
   `];
 
@@ -169,12 +206,27 @@ export class SearchDialog extends LitElement {
     this.error = '';
     this.selectedIndex = -1;
     this.recentItems = [];
-    this._debouncedSearch = this._debounce(this._search.bind(this), 300);
+    this.showLoading = false;
+    this.hasSearched = false;
+    
+    // For cleanup of pending searches
+    this._searchController = null;
+    this._loadingTimeout = null;
+    this._debouncedSearch = this._debounce(this._search.bind(this), 150);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._cancelPendingSearch();
+    if (this._loadingTimeout) {
+      clearTimeout(this._loadingTimeout);
+    }
   }
 
   render() {
-    const showResults = this.query.trim().length > 0;
-    const items = showResults ? this.results : this.recentItems;
+    const query = this.query.trim();
+    const showResults = query.length > 0;
+    const items = showResults ? (this.loading ? (this.results.length ? this.results : this.recentItems) : this.results) : this.recentItems;
 
     return html`
       <sl-dialog 
@@ -201,13 +253,11 @@ export class SearchDialog extends LitElement {
         <div class="results">
           ${this.error ? html`
             <div class="message error">${this.error}</div>
-          ` : this.loading ? html`
-            <div class="message">Searching...</div>
           ` : showResults ? 
-            (this.results.length ? html`
-              ${this.results.map((result, index) => this._renderItem(result, index, true))}
+            (items.length ? html`
+              ${items.map((result, index) => this._renderItem(result, index, true))}
             ` : html`
-              <div class="message">No results found</div>
+              <div class="message">No matches found</div>
             `)
             : html`
               <div class="section-title">Recent</div>
@@ -231,24 +281,16 @@ export class SearchDialog extends LitElement {
   _renderItem(item, index, highlight) {
     return html`
       <div 
-        class="result-item ${index === this.selectedIndex ? 'selected' : ''}" 
-        @click=${() => this._onResultClick(item)}
-        @mouseover=${() => this.selectedIndex = index}
-        role="button"
+        class="result-item ${index === this.selectedIndex ? 'selected' : ''}"
+        role="option"
+        aria-selected=${index === this.selectedIndex}
         tabindex="0"
+        @click=${() => this._onResultClick(item)}
       >
-        <sl-icon 
-          name=${item.type === 'project' ? 'folder' : 'check2-square'}
-        ></sl-icon>
+        <sl-icon name=${item.type === 'project' ? 'folder' : 'check-square'}></sl-icon>
         <div class="result-content">
-          <div class="result-title">
-            ${highlight ? this._highlightMatch(item.title) : item.title}
-          </div>
-          ${item.type === 'task' && item.description ? html`
-            <div class="result-subtitle">
-              ${highlight ? this._highlightMatch(item.description) : item.description}
-            </div>
-          ` : ''}
+          <div class="result-title">${highlight ? this._highlightMatch(item.title) : item.title}</div>
+          <div class="result-subtitle">${highlight ? this._highlightMatch(item.subtitle) : item.subtitle}</div>
         </div>
       </div>
     `;
@@ -279,7 +321,6 @@ export class SearchDialog extends LitElement {
 
   _onInput(e) {
     this.query = e.target.value;
-    this.selectedIndex = -1;
     this._debouncedSearch();
   }
 
@@ -288,23 +329,29 @@ export class SearchDialog extends LitElement {
     this.results = [];
     this.error = '';
     this.selectedIndex = -1;
-    this._loadRecentItems(); // Reload recent items when clearing search
+    this.hasSearched = false;
+    this._loadRecentItems();
   }
 
   _onKeyDown(e) {
     const items = this.query.trim() ? this.results : this.recentItems;
     if (!items.length) return;
     
+    const input = this.shadowRoot.querySelector('sl-input');
+    const isInputFocused = document.activeElement === input;
+    
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        if (e.target.tagName === 'INPUT') {
+        e.stopPropagation();
+        if (isInputFocused || this.selectedIndex === -1) {
           // Move from input to first result
           this.selectedIndex = 0;
-          requestAnimationFrame(() => {
-            const firstItem = this.shadowRoot.querySelector('.result-item');
-            if (firstItem) firstItem.focus();
-          });
+          const firstItem = this.shadowRoot.querySelector('.result-item');
+          if (firstItem) {
+            input.blur();
+            firstItem.focus();
+          }
         } else if (this.selectedIndex < items.length - 1) {
           // Move to next result
           this.selectedIndex++;
@@ -314,11 +361,13 @@ export class SearchDialog extends LitElement {
       
       case 'ArrowUp':
         e.preventDefault();
+        e.stopPropagation();
         if (this.selectedIndex <= 0) {
           // Move from first result back to input
           this.selectedIndex = -1;
-          const input = this.shadowRoot.querySelector('sl-input');
-          if (input) input.focus();
+          const currentFocused = this.shadowRoot.querySelector('.result-item:focus');
+          if (currentFocused) currentFocused.blur();
+          input.focus();
         } else {
           // Move to previous result
           this.selectedIndex--;
@@ -328,39 +377,90 @@ export class SearchDialog extends LitElement {
 
       case 'Enter':
         e.preventDefault();
-        if (this.selectedIndex >= 0 && items[this.selectedIndex]) {
+        if (items.length > 0) {
+          // If no item is selected but we have results, select the first one
+          if (this.selectedIndex === -1) {
+            this.selectedIndex = 0;
+          }
           this._onResultClick(items[this.selectedIndex]);
         }
+        break;
+
+      case 'Escape':
+        e.preventDefault();
+        this._onClose();
         break;
     }
   }
 
   _scrollSelectedIntoView() {
-    requestAnimationFrame(() => {
-      const selected = this.shadowRoot.querySelector('.result-item.selected');
-      if (selected) {
-        selected.scrollIntoView({ block: 'nearest' });
-        selected.focus();
-      }
-    });
+    // First remove focus from all items
+    const allItems = this.shadowRoot.querySelectorAll('.result-item');
+    allItems.forEach(item => item.blur());
+
+    // Then focus and scroll the selected item
+    const selected = this.shadowRoot.querySelector(`.result-item:nth-child(${this.selectedIndex + 1})`);
+    if (selected) {
+      selected.scrollIntoView({ block: 'nearest' });
+      selected.focus();
+    }
   }
 
   async _search() {
-    if (!this.query.trim()) {
-      this.results = [];
-      return;
-    }
-
-    this.loading = true;
-    this.error = '';
     try {
-      this.results = await searchAll(this.query.trim());
-    } catch (error) {
-      console.error('Search failed:', error);
-      this.error = 'Search failed. Please try again.';
-      this.results = [];
-    } finally {
+      // Cancel any pending search
+      this._cancelPendingSearch();
+
+      // Clear error state
+      this.error = null;
+
+      // If query is empty, show recent items
+      if (!this.query?.trim()) {
+        this.results = [];
+        this.loading = false;
+        this.hasSearched = false;
+        await this._loadRecentItems();
+        return;
+      }
+
+      // Create new abort controller for this search
+      this._searchController = new AbortController();
+
+      // Show loading state after a delay to prevent flicker
+      this._loadingTimeout = setTimeout(() => {
+        if (!this.results?.length) {
+          this.showLoading = true;
+        }
+      }, 100);
+
+      // Perform search
+      this.loading = true;
+      const results = await searchAll(this.query, {
+        signal: this._searchController.signal
+      });
+
+      // Update state with results
+      this.results = results;
+      this.recentItems = [];
+      this.hasSearched = true;
       this.loading = false;
+      this.showLoading = false;
+      
+      // Always select the first result if there are any results
+      this.selectedIndex = results.length > 0 ? 0 : -1;
+
+    } catch (err) {
+      if (err.message !== 'Search cancelled') {
+        console.error('Search failed:', err);
+        this.error = 'Search failed. Please try again.';
+        this.results = [];
+      }
+    } finally {
+      if (this._loadingTimeout) {
+        clearTimeout(this._loadingTimeout);
+        this._loadingTimeout = null;
+      }
+      this._searchController = null;
     }
   }
 
@@ -427,7 +527,15 @@ export class SearchDialog extends LitElement {
       this.requestUpdate();
     } catch (error) {
       console.error('Failed to load recent items:', error);
+      this.error = 'Failed to load recent items.';
       this.recentItems = [];
+    }
+  }
+
+  _cancelPendingSearch() {
+    if (this._searchController) {
+      this._searchController.abort();
+      this._searchController = null;
     }
   }
 }

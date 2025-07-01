@@ -134,8 +134,31 @@ export class AppShell extends LitElement {
   }
 
   _handleKeyDown(e) {
-    // Don't trigger if typing in an input field or if modifier keys are pressed
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.metaKey || e.ctrlKey || e.altKey) {
+    // Don't trigger if typing in a form control or if modifier keys are pressed
+    const composedPath = e.composedPath();
+    const isFormControl = composedPath.some(el => {
+      if (!el.tagName) return false;
+      const tag = el.tagName.toLowerCase();
+      
+      // Check for native form controls
+      if (tag === 'input' || tag === 'textarea') {
+        return true;
+      }
+      
+      // Check for Shoelace form controls
+      if (tag === 'sl-input' || tag === 'sl-textarea' || tag === 'sl-select') {
+        return true;
+      }
+      
+      // Only prevent search in project/task forms
+      if (tag === 'project-form' || tag === 'task-form') {
+        return true;
+      }
+      
+      return false;
+    });
+
+    if (isFormControl || e.metaKey || e.ctrlKey || e.altKey) {
       return;
     }
 
@@ -199,7 +222,10 @@ export class AppShell extends LitElement {
   }
 
   _openSearch() {
-    this.shadowRoot.querySelector('search-dialog').show();
+    const searchDialog = this.shadowRoot.querySelector('search-dialog');
+    if (searchDialog) {
+      searchDialog.show();
+    }
   }
 }
 
