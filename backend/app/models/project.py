@@ -13,6 +13,7 @@ class Project(Base):
     description = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now())
+    last_accessed = Column(DateTime(timezone=True), server_default=func.now())
     
     # Use string reference to avoid circular imports
     tasks = relationship("Task", back_populates="project", cascade="all, delete-orphan") 

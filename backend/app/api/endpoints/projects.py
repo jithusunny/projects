@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from uuid import UUID
@@ -21,10 +21,16 @@ async def create_project(project: ProjectCreate, db: AsyncSession = Depends(get_
     return await project_crud.create_project(db=db, project=project)
 
 @router.get("/{project_id}", response_model=Project)
-async def read_project(project_id: UUID, db: AsyncSession = Depends(get_db)):
-    db_project = await project_crud.get_project(db, project_id=project_id)
+async def read_project(
+    project_id: UUID,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db)
+):
+    db_project = await project_crud.get_project(db, project_id)
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
+    
+    background_tasks.add_task(project_crud.touch_project, db, project_id)
     return db_project
 
 @router.put("/{project_id}", response_model=Project)
@@ -42,10 +48,16 @@ async def delete_project(project_id: UUID, db: AsyncSession = Depends(get_db)):
     return {"message": "Project deleted successfully"}
 
 @router.get("/{project_id}/tasks", response_model=List[Task])
-async def read_project_tasks(project_id: UUID, db: AsyncSession = Depends(get_db)):
-    db_project = await project_crud.get_project(db, project_id=project_id)
+async def read_project_tasks(
+    project_id: UUID,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db)
+):
+    db_project = await project_crud.get_project(db, project_id)
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
+    
+    background_tasks.add_task(project_crud.touch_project, db, project_id)
     tasks = await task_crud.get_tasks_by_project(db, project_id)
     return tasks
 

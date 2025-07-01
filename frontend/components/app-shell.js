@@ -153,7 +153,7 @@ export class AppShell extends LitElement {
           <div class="left">
             <a class="logo-link" href="/" @click=${this._navigate}>
               <sl-icon name="stars"></sl-icon>
-              Jisukapp
+              Zuperb
             </a>
           </div>
           <div class="title">
